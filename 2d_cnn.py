@@ -24,7 +24,7 @@ import torchvision.datasets as datasets
 import torchvision.models as models
 from PIL import Image
 
-epoches = 30
+epoches = 50
 batches = 100
 
 import torch
@@ -103,9 +103,9 @@ class Net(nn.Module):
         self.conv2 = nn.Conv2d(32,64,5,padding=5)
         self.conv3 = nn.Conv2d(64,256,5)
         self.conv4 = nn.Conv2d(256,512,5,padding=0)
-        self.conv5 = nn.Conv2d(512,2048,5,padding=0)
+        self.conv5 = nn.Conv2d(512,1024,5,padding=0)
         
-        self.fc1 = nn.Linear(346112, 2048)
+        self.fc1 = nn.Linear(173056, 2048)
         self.fc2 = nn.Linear(2048, 512)
         self.fc3 = nn.Linear(512, 128)
         self.fc4 = nn.Linear(128, 2)
@@ -189,7 +189,8 @@ plt.ylabel('loss')
 plt.grid()
 plt.legend(['loss', 'kk_error', 'kb_error'])
 plt.savefig(save_name+"_loss.jpg")
-plt.show()
+# plt.show()
+plt.clf()
 
 # net.load_state_dict(torch.load(PATH))
 import tqdm
@@ -236,4 +237,4 @@ with torch.no_grad():
     plt.ylabel('kb')
     plt.grid()
     plt.savefig(save_name+"_acc.jpg")
-    plt.show()
+    # plt.show()
