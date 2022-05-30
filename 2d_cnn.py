@@ -25,7 +25,7 @@ import torchvision.models as models
 from PIL import Image
 
 epoches = 30
-batches = 200
+batches = 100
 
 import torch
 import torchvision.transforms as transforms
@@ -38,7 +38,6 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
 
 train_folder = "data10000/"
 test_folder = "test_data/"
@@ -103,10 +102,10 @@ class Net(nn.Module):
         self.dout = nn.Dropout(0.2)
         self.conv2 = nn.Conv2d(32,64,5,padding=5)
         self.conv3 = nn.Conv2d(64,256,5)
-        self.conv4 = nn.Conv2d(256,512,5,padding=5)
+        self.conv4 = nn.Conv2d(256,512,5,padding=0)
         self.conv5 = nn.Conv2d(512,2048,5,padding=0)
         
-        self.fc1 = nn.Linear(100352, 2048)
+        self.fc1 = nn.Linear(346112, 2048)
         self.fc2 = nn.Linear(2048, 512)
         self.fc3 = nn.Linear(512, 128)
         self.fc4 = nn.Linear(128, 2)
@@ -117,7 +116,7 @@ class Net(nn.Module):
         x = self.conv2(x)
         x = self.dout(x)
         x = F.relu(x)
-        x = self.pool(F.relu(self.conv3(x)))
+        x = F.relu(self.conv3(x))
         x = self.dout(x)
         x = self.pool(F.relu(self.conv4(x)))
         x = self.pool(F.relu(self.conv5(x)))
