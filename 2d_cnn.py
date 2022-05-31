@@ -103,28 +103,30 @@ class Net(nn.Module):
         self.conv2 = nn.Conv2d(32,64,5)
         self.conv3 = nn.Conv2d(64,256,5)
         self.conv4 = nn.Conv2d(256,512,5)
-        # self.conv5 = nn.Conv2d(512,1024,5)
+        self.conv5 = nn.Conv2d(512,1024,5)
         
-        self.fc1 = nn.Linear(8192, 2048)
-        self.fc2 = nn.Linear(2048, 512)
-        self.fc3 = nn.Linear(512, 128)
-        self.fc4 = nn.Linear(128, 2)
+        self.fc1 = nn.Linear(16384, 5196)
+        self.fc2 = nn.Linear(5196, 1024)
+        self.fc3 = nn.Linear(1024, 512)
+        self.fc4 = nn.Linear(512, 128)
+        self.fcf = nn.Linear(128, 2)
 
     def forward(self,x):
         x = self.conv1(x)
         x = F.relu(x)
-        x = self.pool(self.conv2(x))
+        x = self.conv2(x)
         x = self.dout(x)
         x = F.relu(x)
         x = self.pool(F.relu(self.conv3(x)))
         x = self.dout(x)
         x = self.pool(F.relu(self.conv4(x)))
-        # x = self.pool(F.relu(self.conv5(x)))
+        x = self.pool(F.relu(self.conv5(x)))
         x = x.view(x.size(0),-1)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = F.relu(self.fc3(x))
-        x = self.fc4(x)
+        x = F.relu(self.fc4(x))
+        x = self.fcf(x)
         return x
 
 net = Net()
@@ -178,7 +180,7 @@ for epoch in range(epoches):
     running_loss = 0.0
 
 print('Finished Training')
-save_name = 'data{}_epoches{}_batches_{}_pad3000maxpool'.format(len(train_set),epoches,batches)
+save_name = 'data{}_epoches{}_batches_{}_pad3000conv5'.format(len(train_set),epoches,batches)
 torch.save(net, save_name+'_model.pt')
 
 import matplotlib.pyplot as plt
