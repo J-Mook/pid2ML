@@ -25,7 +25,7 @@ import torchvision.models as models
 from PIL import Image
 
 epoches = 50
-batches = 100
+batches = 200
 
 import torch
 import torchvision.transforms as transforms
@@ -100,12 +100,12 @@ class Net(nn.Module):
         self.conv1 = nn.Conv2d(1,32,3,padding=3)
         self.pool = nn.MaxPool2d(2,2)
         self.dout = nn.Dropout(0.2)
-        self.conv2 = nn.Conv2d(32,64,5,padding=5)
+        self.conv2 = nn.Conv2d(32,64,5)
         self.conv3 = nn.Conv2d(64,256,5)
-        self.conv4 = nn.Conv2d(256,512,5,padding=0)
-        self.conv5 = nn.Conv2d(512,1024,5,padding=0)
+        self.conv4 = nn.Conv2d(256,512,5)
+        # self.conv5 = nn.Conv2d(512,1024,5)
         
-        self.fc1 = nn.Linear(173056, 2048)
+        self.fc1 = nn.Linear(8192, 2048)
         self.fc2 = nn.Linear(2048, 512)
         self.fc3 = nn.Linear(512, 128)
         self.fc4 = nn.Linear(128, 2)
@@ -113,13 +113,13 @@ class Net(nn.Module):
     def forward(self,x):
         x = self.conv1(x)
         x = F.relu(x)
-        x = self.conv2(x)
+        x = self.pool(self.conv2(x))
         x = self.dout(x)
         x = F.relu(x)
-        x = F.relu(self.conv3(x))
+        x = self.pool(F.relu(self.conv3(x)))
         x = self.dout(x)
         x = self.pool(F.relu(self.conv4(x)))
-        x = self.pool(F.relu(self.conv5(x)))
+        # x = self.pool(F.relu(self.conv5(x)))
         x = x.view(x.size(0),-1)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
@@ -178,7 +178,7 @@ for epoch in range(epoches):
     running_loss = 0.0
 
 print('Finished Training')
-save_name = 'data{}_epoches{}_batches_{}_pad3550'.format(len(train_set),epoches,batches)
+save_name = 'data{}_epoches{}_batches_{}_pad3000maxpool'.format(len(train_set),epoches,batches)
 torch.save(net, save_name+'_model.pt')
 
 import matplotlib.pyplot as plt
