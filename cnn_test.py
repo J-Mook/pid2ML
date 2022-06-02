@@ -24,6 +24,7 @@ class CustomModel(nn.Module):
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 img_folder = "test_data/"
+# img_folder = "data10000/"
 test_set=[file for file in os.listdir(img_folder) if file.endswith(".jpg")]
 
 class ImageDataset(Dataset):
@@ -131,7 +132,7 @@ class Net(nn.Module):
 
 model = Net()
 model = torch.load("data10000_epoches50_batches_200_512model_fix_model.pt", map_location=device)
-model.eval()
+# model.eval()
 
 model.to(device)
 import tqdm
@@ -162,7 +163,7 @@ with torch.no_grad():
         # print(pred_error)
         # print(error[0]/total, error[1]/total)
         # print("test {}/{} finished!! {} {}".format(i, len(test_set), len(correct_graph[0]),len(test_set)))
-        
+        # print(labels.detach().cpu().numpy(),  outputs.detach().cpu().numpy())
     print('Accuracy : %f %%' % (100*len(correct_graph[0])/len(test_set)))
 
     plt.title('Accuracy : %f %%' % (100*len(correct_graph[0])/len(test_set)))

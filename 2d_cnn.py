@@ -24,7 +24,7 @@ import torchvision.datasets as datasets
 import torchvision.models as models
 from PIL import Image
 
-epoches = 50
+epoches = 100
 batches = 200
 
 import torch

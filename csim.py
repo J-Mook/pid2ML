@@ -34,7 +34,7 @@ def poolcontext(*args, **kwargs):
 activate_CPU = multiprocessing.cpu_count()
 print(multiprocessing.cpu_count())
 def main():
-    l = 50
+    l = 100
     # for k in tqdm.tqdm(range(l)):
     #     for b in range(l):
     #         sim(kp = 1.0, ki = 0.1, kd = 0.5, dt = 0.5, kk = k/l, kb = b/l)
