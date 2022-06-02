@@ -39,6 +39,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+np.random.seed(10)
 train_folder = "data10000/"
 test_folder = "test_data/"
 train_set,test_set=train_test_split([file for file in os.listdir(train_folder) if file.endswith(".jpg")], test_size=0.2)
@@ -97,40 +98,35 @@ test_dataloader = DataLoader(
 class Net(nn.Module):
     def __init__(self):
         super(Net,self).__init__()
-        self.conv1 = nn.Conv2d(1,32,3,padding=3)
-        self.pool = nn.MaxPool2d(2,2)
-        self.dout = nn.Dropout(0.2)
+        self.conv1 = nn.Conv2d(1,32,3)
+        self.pool1 = nn.MaxPool2d(2,2)
+        self.pool2 = nn.MaxPool2d(2,2)
+        self.dout1 = nn.Dropout(0.2)
+        self.dout2 = nn.Dropout(0.2)
         self.conv2 = nn.Conv2d(32,64,5)
         self.conv3 = nn.Conv2d(64,256,5)
         self.conv4 = nn.Conv2d(256,512,5)
-        self.conv5 = nn.Conv2d(512,1024,5)
         
-        self.fc1 = nn.Linear(16384, 5196)
-        self.fc2 = nn.Linear(5196, 1024)
-        self.fc3 = nn.Linear(1024, 512)
-        self.fc4 = nn.Linear(512, 128)
+        self.fc1 = nn.Linear(25600*2, 1024)
+        self.fc2 = nn.Linear(1024, 128)
         self.fcf = nn.Linear(128, 2)
-
+    
     def forward(self,x):
         x = self.conv1(x)
         x = F.relu(x)
         x = self.conv2(x)
-        x = self.dout(x)
+        x = self.dout1(x)
         x = F.relu(x)
-        x = self.pool(F.relu(self.conv3(x)))
-        x = self.dout(x)
-        x = self.pool(F.relu(self.conv4(x)))
-        x = self.pool(F.relu(self.conv5(x)))
+        x = self.pool1(F.relu(self.conv3(x)))
+        x = self.dout2(x)
+        x = self.pool2(F.relu(self.conv4(x)))
         x = x.view(x.size(0),-1)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = F.relu(self.fc3(x))
-        x = F.relu(self.fc4(x))
         x = self.fcf(x)
         return x
 
 net = Net()
-# net = resnet50()
 print(torch.cuda.is_available())
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -180,7 +176,7 @@ for epoch in range(epoches):
     running_loss = 0.0
 
 print('Finished Training')
-save_name = 'data{}_epoches{}_batches_{}_pad3000conv5'.format(len(train_set),epoches,batches)
+save_name = 'data{}_epoches{}_batches_{}_512model_fix'.format(len(train_set),epoches,batches)
 torch.save(net, save_name+'_model.pt')
 
 import matplotlib.pyplot as plt
@@ -194,7 +190,6 @@ plt.savefig(save_name+"_loss.jpg")
 # plt.show()
 plt.clf()
 
-# net.load_state_dict(torch.load(PATH))
 import tqdm
 import matplotlib.patches as mpatches
 
@@ -202,6 +197,7 @@ error = [0, 0]
 error_graph = [[], []]
 correct_graph = [[], []]
 except_error = 0.01
+
 with torch.no_grad():
     for i, d in enumerate(tqdm.tqdm(test_dataloader)): #test loader에서 데이터들을 하나씩 꺼냅니다.
         images, labels = d
