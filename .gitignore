@@ -2,5 +2,5 @@ data2500/*
 data10000/*
 data2500/*
 test_data/*
-old/*
+# old/*
 *.pt
