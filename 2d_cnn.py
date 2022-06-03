@@ -24,7 +24,7 @@ import torchvision.datasets as datasets
 import torchvision.models as models
 from PIL import Image
 
-epoches = 150
+epoches = 100
 batches = 200
 
 import torch
@@ -101,8 +101,8 @@ class Net(nn.Module):
         self.conv1 = nn.Conv2d(1,32,3)
         self.pool1 = nn.MaxPool2d(2,2)
         self.pool2 = nn.MaxPool2d(2,2)
-        self.dout1 = nn.Dropout(0.2)
-        self.dout2 = nn.Dropout(0.2)
+        self.dout1 = nn.Dropout(0.5)
+        self.dout2 = nn.Dropout(0.5)
         self.conv2 = nn.Conv2d(32,64,5)
         self.conv3 = nn.Conv2d(64,256,5)
         self.conv4 = nn.Conv2d(256,512,5)
@@ -207,7 +207,7 @@ for epoch in range(epoches):
     running_loss = 0.0
 
 print('Finished Training')
-save_name = 'data{}_epoches{}_batches_{}_512model_fix'.format(len(train_set),epoches,batches)
+save_name = 'data{}_epoches{}_batches_{}_512model_drop0.5'.format(len(train_set),epoches,batches)
 torch.save(net, save_name+'_model.pt')
 
 import matplotlib.pyplot as plt
